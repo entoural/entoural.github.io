@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Roblox Scripter Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Dark background */
+            color: #e5e7eb; /* Light text */
+            overflow-x: hidden;
+        }
+
+        /* --- Preloader Styles --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #111827; z-index: 9999; display: flex;
+            justify-content: center; align-items: center; transition: opacity 0.7s ease-out;
+        }
+        #preloader.hidden { opacity: 0; pointer-events: none; }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2); border-left-color: #6366f1;
+            border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Particle JS Container --- */
+        #particles-js {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 0;
+        }
+        #home > div.hero-content { position: relative; z-index: 1; } /* Ensure hero content is above particles */
+
+        /* --- Animation & Typed.js Styles --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-element { animation: fadeIn 0.9s ease-out forwards; opacity: 0; }
+        .stagger-fade > * { opacity: 0; animation: fadeIn 0.9s ease-out forwards; }
+        /* Typed.js Cursor */
+        .typed-cursor {
+            opacity: 1;
+            animation: blink 0.7s infinite;
+            color: #a5b4fc; /* Lighter indigo for cursor */
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+
+        /* --- Enhanced Hover Effects --- */
+        .neon-glow-hover:hover {
+             box-shadow: 0 0 8px #6366f1, 0 0 20px #6366f1, 0 0 35px #6366f1;
+             transition: box-shadow 0.3s ease-in-out;
+        }
+        .neon-text-glow-hover:hover {
+             text-shadow: 0 0 7px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.6);
+             transition: text-shadow 0.3s ease-in-out;
+        }
+        /* 3D Tilt Effect for Project Cards */
+        .project-card {
+            transition: transform 0.4s ease-out, box-shadow 0.4s ease-out, border-color 0.4s ease-out;
+            border: 2px solid transparent;
+            transform-style: preserve-3d; /* Needed for 3D transforms */
+        }
+        .project-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+            border-color: #4f46e5;
+            /* Subtle 3D tilt - adjust rotation values for desired effect */
+            transform: perspective(1000px) rotateY(5deg) rotateX(3deg) scale(1.04);
+        }
+
+        /* --- Mobile Menu Styles --- */
+        #mobile-menu {
+            transition: transform 0.35s ease-in-out; transform: translateX(100%);
+        }
+        #mobile-menu.active { transform: translateX(0); }
+
+        /* --- Game Stats Section Styles --- */
+        .game-stats-card {
+            background: rgba(31, 41, 55, 0.7); /* Slightly transparent dark gray */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(79, 70, 229, 0.5); /* Subtle indigo border */
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+        .game-stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+        .stat-value {
+            color: #818cf8; /* Lighter indigo for stats */
+            font-weight: 700;
+            min-width: 80px; /* Prevent layout shifts */
+            display: inline-block;
+            text-align: right;
+        }
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e; /* Green */
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <header class="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" class="text-2xl font-bold text-indigo-400 neon-text-glow-hover">Your Name</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#about" class="text-gray-300 hover:text-indigo-400 transition duration-300 neon-text-glow-hover">About</a>
+                <a href="#gamestats" class="text-gray-300 hover:text-indigo-400 transition duration-300 neon-text-glow-hover">Game Stats</a>
+                <a href="#projects" class="text-gray-300 hover:text-indigo-400 transition duration-300 neon-text-glow-hover">Projects</a>
+                <a href="#skills" class="text-gray-300 hover:text-indigo-400 transition duration-300 neon-text-glow-hover">Skills</a>
+                <a href="#contact" class="text-gray-300 hover:text-indigo-400 transition duration-300 neon-text-glow-hover">Contact</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-300 focus:outline-none z-50">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <div id="mobile-menu" class="fixed top-0 right-0 h-full w-64 bg-gray-800 shadow-lg z-40 p-6 md:hidden">
+        <nav class="flex flex-col space-y-6 mt-8">
+            <a href="#about" class="text-gray-200 hover:text-indigo-300 text-lg mobile-nav-link">About</a>
+            <a href="#gamestats" class="text-gray-200 hover:text-indigo-300 text-lg mobile-nav-link">Game Stats</a>
+            <a href="#projects" class="text-gray-200 hover:text-indigo-300 text-lg mobile-nav-link">Projects</a>
+            <a href="#skills" class="text-gray-200 hover:text-indigo-300 text-lg mobile-nav-link">Skills</a>
+            <a href="#contact" class="text-gray-200 hover:text-indigo-300 text-lg mobile-nav-link">Contact</a>
+        </nav>
+    </div>
+
+    <section id="home" class="min-h-screen flex items-center justify-center text-center bg-gradient-to-br from-gray-900 via-indigo-900/50 to-gray-900 px-6 relative overflow-hidden">
+        <div id="particles-js"></div>
+        <div class="max-w-4xl mx-auto hero-content">
+            <h1 id="hero-headline" class="text-5xl md:text-7xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-400">
+                </h1>
+            <p class="text-xl md:text-2xl text-indigo-200 mb-8 animate-fade-in" style="animation-delay: 0.5s;">
+                Innovative Roblox Scripter & Game Developer
+            </p>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto mb-10 animate-fade-in" style="animation-delay: 0.8s;">
+                Passionate about crafting immersive experiences and complex systems within the Roblox platform using Lua. Let's build something amazing together!
+            </p>
+            <a href="#projects"
+               class="inline-block bg-indigo-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105 neon-glow-hover animate-fade-in"
+               style="animation-delay: 1.1s;">
+                View My Work
+            </a>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 px-6 bg-gray-800/90 backdrop-blur-sm">
+        <div class="container mx-auto max-w-4xl text-center fade-in-element">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-400">About Me</h2>
+            <img src="https://placehold.co/150x150/4f46e5/ffffff?text=You" alt="Your Photo" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-indigo-500 shadow-lg transform hover:scale-110 transition duration-300">
+             <p class="text-lg text-gray-300 mb-4 leading-relaxed">
+                Hello! I'm [Your Name], a dedicated Roblox scripter with [Number] years of experience. I specialize in creating [mention specific areas like game mechanics, UI scripting, backend systems, anti-cheat, etc.]. My journey started with [briefly mention how you started] and has grown into a deep passion for leveraging the Roblox engine to build engaging and robust games.
+            </p>
+            <p class="text-lg text-gray-300 leading-relaxed">
+                I thrive on challenges and enjoy collaborating with others to bring creative visions to life. Always eager to learn new techniques and push the boundaries of what's possible on the platform.
+            </p>
+        </div>
+    </section>
+
+    <section id="gamestats" class="py-20 px-6 bg-gradient-to-b from-gray-900 to-gray-800/90">
+         <div class="container mx-auto max-w-4xl text-center fade-in-element">
+            <h2 class="text-4xl font-bold mb-10 text-indigo-400">Featured Game Showcase</h2>
+            <div class="game-stats-card p-6 md:p-8 rounded-xl shadow-2xl max-w-2xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                    <img src="https://placehold.co/300x180/312e81/ffffff?text=Your+Game+Thumbnail" alt="Featured Game Thumbnail" class="w-full md:w-1/3 h-auto rounded-lg shadow-lg">
+                    <div class="text-left flex-grow">
+                        <h3 class="text-2xl md:text-3xl font-semibold mb-3 text-indigo-300">[Your Featured Game Title]</h3>
+                        <p class="text-gray-400 mb-5">
+                            A brief description highlighting the key aspects of your most prominent game or project.
+                        </p>
+                        <div class="space-y-3 text-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300"><span class="live-dot"></span>Live Players (CCU):</span>
+                                <span id="game-ccu" class="stat-value">---</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Total Visits:</span>
+                                <span id="game-visits" class="stat-value">---</span>
+                            </div>
+                        </div>
+                        <a href="#" target="_blank" class="inline-block mt-6 bg-green-500 text-white px-5 py-2 rounded hover:bg-green-600 transition duration-300 text-sm font-semibold neon-glow-hover">Play Now</a>
+                         </div>
+                </div>
+                 <p class="text-xs text-gray-500 mt-4 text-center italic">Note: Live player and visit counts are simulated for demonstration purposes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="py-20 px-6 bg-gray-900">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12 text-indigo-400 fade-in-element">More Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 stagger-fade">
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden project-card" style="animation-delay: 0.2s;">
+                    <img src="https://placehold.co/600x400/312e81/ffffff?text=Project+1" alt="Project 1 Screenshot" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold mb-3 text-indigo-300">Project Title 1</h3>
+                        <p class="text-gray-400 mb-4">A short description of your first project...</p>
+                        <p class="text-sm text-indigo-400 mb-4">Skills: Lua, Roblox API, UI Design</p>
+                        <a href="#" target="_blank" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-300 text-sm neon-glow-hover">View Project</a>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden project-card" style="animation-delay: 0.4s;">
+                    <img src="https://placehold.co/600x400/312e81/ffffff?text=Project+2" alt="Project 2 Screenshot" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold mb-3 text-indigo-300">Project Title 2</h3>
+                        <p class="text-gray-400 mb-4">Description for the second project...</p>
+                        <p class="text-sm text-indigo-400 mb-4">Skills: Advanced Lua, Server-Client</p>
+                        <a href="#" target="_blank" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-300 text-sm neon-glow-hover">View Project</a>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden project-card" style="animation-delay: 0.6s;">
+                    <img src="https://placehold.co/600x400/312e81/ffffff?text=Project+3" alt="Project 3 Screenshot" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold mb-3 text-indigo-300">Project Title 3</h3>
+                        <p class="text-gray-400 mb-4">Showcase another project...</p>
+                        <p class="text-sm text-indigo-400 mb-4">Skills: ModuleScripts, OOP</p>
+                        <a href="#" target="_blank" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-300 text-sm neon-glow-hover">View Project</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="py-20 px-6 bg-gray-800/90 backdrop-blur-sm">
+        <div class="container mx-auto max-w-4xl text-center fade-in-element">
+            <h2 class="text-4xl font-bold mb-10 text-indigo-400">My Skills</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Lua Scripting</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Roblox API Mastery</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Game Mechanics</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">UI/UX Scripting</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Server-Client</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Datastores</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Optimization</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Debugging</span>
+                <span class="bg-indigo-900 text-indigo-200 px-5 py-2 rounded-full text-md font-medium shadow hover:bg-indigo-800 transition duration-200 cursor-default transform hover:scale-110">Git/Rojo</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 px-6 bg-gray-900">
+        <div class="container mx-auto max-w-3xl text-center fade-in-element">
+            <h2 class="text-4xl font-bold mb-6 text-indigo-400">Get In Touch</h2>
+            <p class="text-lg text-gray-300 mb-8">Interested in collaborating or hiring me? Reach out!</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                 <a href="mailto:your.email@example.com" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition duration-300 neon-glow-hover transform hover:scale-105">Email Me</a>
+                 <a href="https://www.roblox.com/users/YOUR_USER_ID/profile" target="_blank" class="bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-600 transition duration-300 neon-glow-hover transform hover:scale-105">Roblox Profile</a>
+                 <a href="https://devforum.roblox.com/u/YOUR_DEVFORUM_USERNAME/summary" target="_blank" class="bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-600 transition duration-300 neon-glow-hover transform hover:scale-105">DevForum</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-center py-8 mt-10 border-t border-gray-700/50">
+        <p class="text-gray-500">&copy; 2025 [Your Name]. All rights reserved.</p>
+    </footer>
+
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Preloader ---
+            const preloader = document.getElementById('preloader');
+            window.addEventListener('load', () => {
+                if(preloader) { preloader.classList.add('hidden'); }
+            });
+
+            // --- Intersection Observer Setup ---
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = entry.target.dataset.delay || '0s';
+                        entry.target.classList.add('animate-fade-in-visible'); // Use this class for triggering CSS animations if needed
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            // Observe fade-in elements
+            document.querySelectorAll('.fade-in-element').forEach(el => observer.observe(el));
+            // Observe staggered elements
+            document.querySelectorAll('.stagger-fade').forEach(container => {
+                const children = container.children;
+                for (let i = 0; i < children.length; i++) {
+                    children[i].style.animationDelay = `${i * 0.15}s`;
+                    observer.observe(children[i]);
+                }
+            });
+             // Observe hero elements (already have inline delay, but ensures visibility trigger)
+             document.querySelectorAll('#home .animate-fade-in').forEach(el => observer.observe(el));
+
+
+             // --- Smooth Scrolling ---
+             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const mobileMenu = document.getElementById('mobile-menu'); // Get menu inside handler
+                    // Close mobile menu if open
+                    if (mobileMenu && mobileMenu.classList.contains('active')) {
+                        mobileMenu.classList.remove('active');
+                    }
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // --- Mobile Menu Toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation(); mobileMenu.classList.toggle('active');
+                });
+                document.addEventListener('click', (e) => {
+                     if (mobileMenu.classList.contains('active') && !mobileMenu.contains(e.target) && e.target !== mobileMenuButton) {
+                         mobileMenu.classList.remove('active');
+                     }
+                 });
+                 // Links inside menu handled by smooth scroll handler above
+            } else { console.error("Mobile menu button or panel not found."); }
+
+
+            // --- Typed.js Initialization ---
+             if (typeof Typed !== 'undefined') {
+                const typed = new Typed('#hero-headline', {
+                    strings: ['[Your Name]', 'Roblox Scripter', 'Game Developer', 'Creator & Innovator'], // Customize these strings
+                    typeSpeed: 70,
+                    backSpeed: 40,
+                    backDelay: 1500,
+                    loop: true,
+                    smartBackspace: true,
+                    cursorChar: '_', // Use a standard cursor character
+                });
+            } else { console.error("Typed.js not loaded."); }
+
+
+            // --- Particles.js Initialization (Enhanced Config) ---
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                  "particles": {
+                    "number": { "value": 100, "density": { "enable": true, "value_area": 800 } }, // Slightly more particles
+                    "color": { "value": "#6366f1" }, // Indigo particles
+                    "shape": { "type": "circle" },
+                    "opacity": { "value": 0.6, "random": true, "anim": { "enable": true, "speed": 0.5, "opacity_min": 0.1, "sync": false } }, // Fade in/out
+                    "size": { "value": 3.5, "random": true, "anim": { "enable": false } },
+                    "line_linked": { "enable": true, "distance": 120, "color": "#ffffff", "opacity": 0.15, "width": 1 }, // Thinner, fainter lines
+                    "move": { "enable": true, "speed": 2, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false } // Random movement
+                  },
+                  "interactivity": {
+                    "detect_on": "canvas",
+                    "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true }, // Grab on hover, push on click
+                    "modes": {
+                      "grab": { "distance": 140, "line_opacity": 0.3 },
+                      "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 },
+                      "repulse": { "distance": 100, "duration": 0.4 },
+                      "push": { "particles_nb": 5 }, // Push more particles on click
+                      "remove": { "particles_nb": 2 }
+                    }
+                  },
+                  "retina_detect": true
+                });
+            } else { console.error("particles.js not loaded."); }
+
+
+            // --- SIMULATED Game Stats Update ---
+            const ccuElement = document.getElementById('game-ccu');
+            const visitsElement = document.getElementById('game-visits');
+
+            if (ccuElement && visitsElement) {
+                // Initial placeholder values (replace with plausible starting numbers)
+                let baseCcu = 150; // Example base concurrent users
+                let currentVisits = 1250600; // Example starting visits
+                const visitsIncrement = 10; // How many visits to add each interval
+
+                // Function to format numbers with commas
+                const formatNumber = (num) => num.toLocaleString();
+
+                // Update stats immediately and then set intervals
+                const updateCcu = () => {
+                    // Simulate fluctuation: base +/- random amount
+                    const fluctuation = Math.floor(Math.random() * 15) - 7; // e.g., -7 to +7
+                    const simulatedCcu = Math.max(0, baseCcu + fluctuation); // Ensure CCU doesn't go below 0
+                    ccuElement.textContent = formatNumber(simulatedCcu);
+                };
+
+                const updateVisits = () => {
+                    currentVisits += Math.floor(Math.random() * visitsIncrement) + 1; // Increment visits
+                    visitsElement.textContent = formatNumber(currentVisits);
+                };
+
+                // Initial display
+                updateCcu();
+                updateVisits();
+
+
+                // Update CCU every 3 seconds (3000 ms)
+                setInterval(updateCcu, 3000);
+
+                // Update Visits every 1.5 seconds (1500 ms)
+                setInterval(updateVisits, 1500);
+
+            } else {
+                console.error("Game stats elements (CCU or Visits) not found.");
+            }
+
+        }); // End DOMContentLoaded
+    </script>
+
+</body>
+</html>
